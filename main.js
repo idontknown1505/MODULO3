@@ -15,100 +15,103 @@ const config = {
 const client = new pg.Pool(config)
 
 // Modelo
-class TodoModel {
+class UsuarioModel {
   constructor() {
-    this.todos = [];
+    this.usuarios = [];
   }
 
-  async getTodos(){
+  async getUsuarios(){
     const res = await client.query('select * from todos;')
     console.log(res);
     return res.rows
   }
 
-  async addTodo(todoText) {
+  async addUsuario(todoText) {
     const query = 'INSERT INTO todos(id, nombre, edad) VALUES($1, $2, $3) RETURNING *';
-    const values = [Math.floor(1000 + Math.random() * 9000), todoText]
+    const values = [Math.floor(1000 + Math.random() * 9000), usuarioText]
     const res = await client.query(query, values)
     return res;
   }
 
-  editTodo(index, todoText) {
-    this.todos[index].text = todoText;
+  editUsuario(index, usuarioText) {
+    this.todos[index].text = usuarioText;
   }
 
-  deleteTodo(index) {
-    this.todos.splice(index, 1);
+  deleteUsuario(index) {
+    this.usuarios.splice(index, 1);
   }
 
-  toggleTodo(index) {
-    this.todos[index].completed = !this.todos[index].completed;
+  toggleUsuario(index) {
+    this.usuarios[index].completed = !this.usuarios[index].completed;
   }
 }
 
 // Controlador
-class TodoController {
+class UsuarioController {
   constructor(model) {
     this.model = model;
+ 
+  }
+ 
+
+
+  async getUsuarios() {
+   return await this.model.getUsuarios();
   }
 
-  async getTodos() {
-   return await this.model.getTodos();
+  async addUsuario(todoText) {
+    await this.model.addUsuario(usuarioText);
   }
 
-  async addTodo(todoText) {
-    await this.model.addTodo(todoText);
+  editUsuario(index, todoText) {
+    this.model.editUsuario(index, usuarioText);
   }
 
-  editTodo(index, todoText) {
-    this.model.editTodo(index, todoText);
+  deleteUsuario(index) {
+    this.model.deleteUsuario(index);
   }
 
-  deleteTodo(index) {
-    this.model.deleteTodo(index);
-  }
-
-  toggleTodo(index) {
-    this.model.toggleTodo(index);
+  toggleUsuario(index) {
+    this.model.toggleUsuario(index);
   }
 }
 
 // Vistas (Rutas)
 const app = express();
-const todoModel = new TodoModel();
-const todoController = new TodoController(todoModel);
+const usuarioModel = new UsuarioModel();
+const usuarioController = new UsuarioController(usuarioModel);
 
 app.use(bodyParser.json());
 
-app.get("/todos",async  (req, res) => {
-  const response = await todoController.getTodos()
+app.get("/usuarios",async  (req, res) => {
+  const response = await usuarioController.getUsuarios()
   res.json(response)
 });
 
 // Vistas (Rutas) (continuación)
-app.post("/todos", (req, res) => {
-  const todoText = req.body.text;
+app.post("/usuarios", (req, res) => {
+  const usuarioText = req.body.text;
   console.log(req.body)
-  todoController.addTodo(todoText);
+  usuarioController.addUsuario(usuarioText);
   res.sendStatus(200);
 });
 
-app.put("/todos/:index", (req, res) => {
+app.put("/usuarios/:index", (req, res) => {
   const index = req.params.index;
-  const todoText = req.body.text;
-  todoController.editTodo(index, todoText);
+  const usuarioText = req.body.text;
+  usuarioController.editUsuario(index, usuarioText);
   res.sendStatus(200);
 });
 
-app.delete("/todos/:index", (req, res) => {
+app.delete("/usuarios/:index", (req, res) => {
   const index = req.params.index;
-  todoController.deleteTodo(index);
+  usuarioController.deleteUsuario(index);
   res.sendStatus(200);
 });
 
-app.patch("/todos/:index", (req, res) => {
+app.patch("/usuarios/:index", (req, res) => {
   const index = req.params.index;
-  todoController.toggleTodo(index);
+  usuarioController.toggleUsuario(index);
   res.sendStatus(200);
 });
 
