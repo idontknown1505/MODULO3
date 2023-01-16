@@ -1,0 +1,6 @@
+curl --location --request POST 'http://localhost:3000/usuarios' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "nombre": "America Quinones ",
+    "edad": "25"
+}'

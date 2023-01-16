@@ -26,7 +26,7 @@ class UsuarioModel {
     return res.rows
   }
 
-  async addUsuario(todoText) {
+  async addUsuario(usuarioText) {
     const query = 'INSERT INTO todos(id, nombre, edad) VALUES($1, $2, $3) RETURNING *';
     const values = [Math.floor(1000 + Math.random() * 9000), usuarioText]
     const res = await client.query(query, values)
@@ -53,17 +53,19 @@ class UsuarioController {
  
   }
  
-
+async getStatus(){
+  return {nameSystem: 'api-rest-nodejs',version: '1.0.0', developer: 'Ivan Chavez Roque', email: 'ichavezroque@gmail.com'}
+}
 
   async getUsuarios() {
    return await this.model.getUsuarios();
   }
 
-  async addUsuario(todoText) {
+  async addUsuario(usuarioText) {
     await this.model.addUsuario(usuarioText);
   }
 
-  editUsuario(index, todoText) {
+  editUsuario(index, usuarioText) {
     this.model.editUsuario(index, usuarioText);
   }
 
